@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Titanic Survival Prediction</title>
+<style>
+    body { font-family: Arial, sans-serif; }
+    form { margin: 20px auto; padding: 20px; border: 1px solid #ccc; max-width: 400px; background-color: #f9f9f9; }
+    label { display: block; margin-bottom: 10px; }
+    input[type="number"], select { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    button[type="submit"] { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
+    button[type="submit"]:hover { background-color: #45a049; }
+</style>
+</head>
+<body>
+    <h1>Titanic Survival Prediction</h1>
+    <form id="predictionForm">
+        <label for="Pclass">Pclass (1, 2, or 3):</label>
+        <input type="number" id="Pclass" name="Pclass" min="1" max="3" required><br>
+        <label for="Age">Age:</label>
+        <input type="number" id="Age" name="Age" step="any" required><br>
+        <label for="SibSp">Number of Siblings/Spouses aboard:</label>
+        <input type="number" id="SibSp" name="SibSp" required><br>
+        <label for="Parch">Number of Parents/Children aboard:</label>
+        <input type="number" id="Parch" name="Parch" required><br>
+        <label for="Fare">Fare:</label>
+        <input type="number" id="Fare" name="Fare" step="any" required><br>
+        <label for="Sex">Sex (male or female):</label>
+        <select id="Sex" name="Sex" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select><br>
+        <label for="Embarked">Embarked Port (C, Q, or S):</label>
+        <select id="Embarked" name="Embarked" required>
+            <option value="C">C</option>
+            <option value="Q">Q</option>
+            <option value="S">S</option>
+        </select><br>
+        <button type="submit">Predict Survival</button>
+    </form>
+
+    <div id="predictionResult"></div>
+
+    <script>
+        document.getElementById("predictionForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            collectFormData();
+        });
+
+        function collectFormData() {
+            var form = document.getElementById("predictionForm");
+            var formData = new FormData(form);
+
+            fetch("/predict", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById("predictionResult").innerHTML = "<h2>Prediction Result</h2>";
+                for (var key in result) {
+                    document.getElementById("predictionResult").innerHTML += "<p>" + key + ": " + result[key] + "</p>";
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
